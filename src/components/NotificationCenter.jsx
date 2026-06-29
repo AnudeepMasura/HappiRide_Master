@@ -1,19 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, Info, ShieldAlert, BadgePercent, Landmark, Ticket } from 'lucide-react';
 import { formatDate } from '../utils/helpers';
+import * as dashboardService from '../services/dashboardService';
 
 function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [notifications, setNotifications] = useState([]);
 
-  // Realistic mock notifications
-  const [notifications, setNotifications] = useState([
-    { id: 1, type: 'KYC', message: 'New Rider Registration: Suresh Cab has uploaded documents', date: '2026-06-09T17:10:00Z', read: false },
-    { id: 2, type: 'WALLET', message: 'Withdrawal Request: Suresh Kumar requested ₹4,500', date: '2026-06-09T08:30:00Z', read: false },
-    { id: 3, type: 'SUPPORT', message: 'Support Ticket #TCK001: Payment failure issue marked HIGH priority', date: '2026-06-09T08:00:00Z', read: true },
-    { id: 4, type: 'REVENUE', message: 'Daily Platform Revenue Alert: Target achieved ₹42,800', date: '2026-06-08T23:00:00Z', read: true },
-    { id: 5, type: 'RIDE', message: 'Intracity Booking Spike Alert: Heavy demand in Hitech City area', date: '2026-06-08T18:15:00Z', read: true }
-  ]);
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const data = await dashboardService.getNotifications();
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch notifications:', err);
+      }
+    }
+    fetchNotifications();
+  }, []);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 

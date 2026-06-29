@@ -21,3 +21,8 @@ export async function getCharts() {
   const response = await apiClient.get('/dashboard/charts');
   return response.data;
 }
+
+export async function getNotifications() {
+  const response = await apiClient.get('/dashboard/notifications');
+  return response.data;
+}
